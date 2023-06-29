@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+  app:
+    platform: linux/x86_64
+    build: .
+    #image: seyit:intern-task
+    ports:
+      - "5000:5000"
+    networks:
+      - mynetwork
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: elastic
+    environment:
+      #- node.name=es01
+      #- cluster.name=es-docker-cluster
+      #- discovery.seed_hosts=es02,es03
+      #- cluster.initial_master_nodes=es01,es02,es03
+      #- bootstrap.memory_lock=true
+      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    #volumes:
+    #  - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
